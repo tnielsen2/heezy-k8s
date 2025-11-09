@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: about-website
+  namespace: heezy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: about-website
+  template:
+    metadata:
+      labels:
+        app: about-website
+    spec:
+      containers:
+      - name: swag
+        image: lscr.io/linuxserver/swag
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: "America/New_York"
+        - name: URL
+          value: "trentnielsen.me"
+        - name: VALIDATION
+          value: "dns"
+        - name: SUBDOMAINS
+          value: "wildcard"
+        - name: DNSPLUGIN
+          value: "cloudflare"
+        - name: DOCKER_MODS
+          value: "linuxserver/mods:swag-auto-proxy|linuxserver/mods:universal-docker|linuxserver/mods:universal-cloudflared"
+        - name: DOCKER_HOST
+          value: "dockerproxy"
+        - name: CF_TUNNEL_NAME
+          value: "swagpipelineproxy"
+        - name: FILE__CF_TUNNEL_CONFIG
+          value: "/config/tunnelconfig.yml"
+        envFrom:
+        - secretRef:
+            name: about-secrets
+        volumeMounts:
+        - name: swag-config
+          mountPath: /config
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 5
+      volumes:
+      - name: swag-config
+        persistentVolumeClaim:
+          claimName: about-swag-config

@@ -1,0 +1,27 @@
+name: Deploy About Website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/about-website/**'
+      - 'base/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -k base/
+          kubectl apply -f base/cloudflare-tunnel.yaml
+          kubectl apply -k apps/about-website/
+          kubectl rollout status deployment/about-website -n heezy --timeout=5m
+
+      - name: Copy website files
+        run: |
+          cd apps/about-website
+          ./deploy-files.sh
