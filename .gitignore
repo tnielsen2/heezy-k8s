@@ -7,3 +7,5 @@ kubeconfig
 *.pem
 secrets/
 .env
+q.instructions
+misc.xml
