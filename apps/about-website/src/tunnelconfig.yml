@@ -1,0 +1,6 @@
+ingress:
+  - hostname: trentnielsen.me
+    service: https://trentnielsen.me
+  - hostname: "*.trentnielsen.me"
+    service: https://trentnielsen.me
+  - service: http_status:404

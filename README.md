@@ -33,6 +33,33 @@ heezy-k8s/
 - ✅ `rook-ceph-block` StorageClass (default)
 - ✅ GitHub runner with kubectl access
 
+## Mac Setup (kubectl configuration)
+
+### Connect to Nebula Cluster from Mac
+
+1. **Create kubectl config directory:**
+   ```bash
+   mkdir -p ~/.kube
+   ```
+
+2. **SSH to nebula-1 and get cluster config:**
+   ```bash
+   ssh ubuntu@192.168.1.15
+   sudo microk8s config
+   ```
+
+3. **Copy output and create config file on Mac:**
+   ```bash
+   nano ~/.kube/config
+   ```
+   Paste the config and change the server IP from `127.0.0.1` to `192.168.1.15`
+
+4. **Test connection:**
+   ```bash
+   kubectl get nodes
+   ```
+   Should show all 5 nebula nodes (nebula-1 through nebula-5)
+
 ## Quick Start
 
 ### 1. Store Cloudflare Credentials in AWS
