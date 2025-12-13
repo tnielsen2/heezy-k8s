@@ -20,7 +20,8 @@ from the k8 cluster, ask me to run them for you.
 
 THe goal is:
 
-A working k8 service, that is deployable using this repo, using the swag container.
+A working k8 service, that is deployable using this repo, using the swag container deployed by GitHub Actions on
+my self-hosted runner.
 And then other services all using any config specific files from this repo, in images in the k8 cluster.
 
 
