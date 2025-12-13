@@ -47,9 +47,6 @@ spec:
         envFrom:
         - secretRef:
             name: about-secrets
-        volumeMounts:
-        - name: swag-config
-          mountPath: /config
         resources:
           requests:
             memory: "256Mi"
@@ -69,7 +66,4 @@ spec:
             port: 80
           initialDelaySeconds: 15
           periodSeconds: 5
-      volumes:
-      - name: swag-config
-        persistentVolumeClaim:
-          claimName: about-swag-config
+
