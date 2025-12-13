@@ -6,6 +6,7 @@ on:
     paths:
       - 'apps/about-website/**'
       - 'base/**'
+      - '.github/workflows/deploy-about-website.yaml'
   workflow_dispatch:
 
 permissions:
