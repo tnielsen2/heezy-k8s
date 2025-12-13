@@ -45,9 +45,7 @@ jobs:
           kubectl set image deployment/about-website swag=025066240222.dkr.ecr.us-east-2.amazonaws.com/about-website:${{ github.sha }} -n heezy || kubectl apply -k apps/about-website/
 
       - name: Deploy base resources
-        run: |
-          kubectl apply -k base/
-          kubectl apply -f base/cloudflare-tunnel.yaml
+        run: kubectl apply -k base/
 
       - name: Wait for rollout
         run: kubectl rollout status deployment/about-website -n heezy --timeout=5m
