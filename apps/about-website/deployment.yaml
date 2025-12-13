@@ -17,7 +17,7 @@ spec:
       - name: ecr-credentials
       containers:
       - name: swag
-        image: 025066240222.dkr.ecr.us-east-2.amazonaws.com/swag-about:latest
+        image: 025066240222.dkr.ecr.us-east-2.amazonaws.com/about-website:latest
         ports:
         - containerPort: 80
         - containerPort: 443

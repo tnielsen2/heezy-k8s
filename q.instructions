@@ -1,0 +1,27 @@
+This repo houses a micro k8s configuration for a home lab cluster running 5 Lenovo ThinkCenter 910q mini pcs with
+1 tb ssds and 32 gigs of ram. The cluster hosts are all configured using a base image of ubuntu with micro k8s installed
+out of the box. I recall testing NFS but am unable to remember if it was thoroughly tested or not.
+
+There are 5 nodes, with the cluster named `nebula` and each node having a numerical identifier. `nebula-1`, `nebula-2`
+etc. Configuration management for setting up cluster host configuration is handled in Ansible. This repo can be
+referenced at the following local filesystem location: `/Users/trentnielsen/dev/tnielsen2/ansible-heezy`.
+
+I am trying to migrate a number of services to this cluster, with the exact same configuration but the k8 equivalent
+that is compatible with my cluster. The first service I am working on migrating is the swag container image, as it
+hosts a personal website that I would like to experiment with. Do not use containers other than what is used here.
+I am ok with adding files for this
+into the apps folder, but I dont know how to do that using this setup. If it is not possible, and do not guess,
+then suggest an alternative route tht involves building containers and then storing and using images from ECR.
+
+/Users/trentnielsen/dev/tnielsen2/docker-compose-usenet/dell-e/docker-compose.yml
+
+Ask any clarifying questions. You are unable to execute shell commands on the host. If you need any information
+from the k8 cluster, ask me to run them for you.
+
+THe goal is:
+
+A working k8 service, that is deployable using this repo, using the swag container.
+And then other services all using any config specific files from this repo, in images in the k8 cluster.
+
+
+

@@ -25,15 +25,15 @@ jobs:
       - name: Build and push image
         run: |
           cd apps/about-website
-          docker build -t swag-about:${{ github.sha }} .
-          docker tag swag-about:${{ github.sha }} 025066240222.dkr.ecr.us-east-2.amazonaws.com/swag-about:${{ github.sha }}
-          docker tag swag-about:${{ github.sha }} 025066240222.dkr.ecr.us-east-2.amazonaws.com/swag-about:latest
-          docker push 025066240222.dkr.ecr.us-east-2.amazonaws.com/swag-about:${{ github.sha }}
-          docker push 025066240222.dkr.ecr.us-east-2.amazonaws.com/swag-about:latest
+          docker build -t about-website:${{ github.sha }} .
+          docker tag about-website:${{ github.sha }} 025066240222.dkr.ecr.us-east-2.amazonaws.com/about-website:${{ github.sha }}
+          docker tag about-website:${{ github.sha }} 025066240222.dkr.ecr.us-east-2.amazonaws.com/about-website:latest
+          docker push 025066240222.dkr.ecr.us-east-2.amazonaws.com/about-website:${{ github.sha }}
+          docker push 025066240222.dkr.ecr.us-east-2.amazonaws.com/about-website:latest
 
       - name: Update deployment image
         run: |
-          kubectl set image deployment/about-website swag=025066240222.dkr.ecr.us-east-2.amazonaws.com/swag-about:${{ github.sha }} -n heezy || kubectl apply -k apps/about-website/
+          kubectl set image deployment/about-website swag=025066240222.dkr.ecr.us-east-2.amazonaws.com/about-website:${{ github.sha }} -n heezy || kubectl apply -k apps/about-website/
 
       - name: Deploy base resources
         run: |

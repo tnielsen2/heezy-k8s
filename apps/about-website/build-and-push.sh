@@ -2,7 +2,7 @@
 set -e
 
 ECR_REGISTRY="025066240222.dkr.ecr.us-east-2.amazonaws.com"
-IMAGE_NAME="swag-about"
+IMAGE_NAME="about-website"
 TAG="${1:-latest}"
 
 echo "Building image..."
