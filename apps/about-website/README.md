@@ -1,26 +1,33 @@
-# About Website
+# About Website (SWAG)
 
-SWAG-based deployment for about.trentnielsen.me
+## Setup
 
-## Architecture
-- **Image**: LinuxServer SWAG (lscr.io/linuxserver/swag)
-- **SSL**: Let's Encrypt via Cloudflare DNS
-- **Files**: Copied from `src/` to persistent storage
-- **Secrets**: AWS Secrets Manager (`production/heezy/about/swag`)
-
-## Deployment
+1. Copy SWAG config files from docker-compose setup:
 ```bash
-kubectl apply -k apps/about-website/
-./apps/about-website/deploy-files.sh
+cp -r /path/to/docker-compose-usenet/media-services/swag ./swag-config
 ```
 
-## Required AWS Secret
-Path: `production/heezy/about/swag`
-```json
-{
-  "CF_ZONE_ID": "your_zone_id",
-  "CF_ACCOUNT_ID": "your_account_id", 
-  "CF_API_TOKEN": "your_api_token",
-  "CF_TUNNEL_PASSWORD": "your_tunnel_password"
-}
+2. Build and push image:
+```bash
+chmod +x build-and-push.sh
+./build-and-push.sh
+```
+
+3. Update deployment.yaml image to: `025066240222.dkr.ecr.us-east-2.amazonaws.com/swag-about:latest`
+
+4. Deploy:
+```bash
+kubectl apply -k .
+```
+
+## Config Files Structure
+```
+swag-config/
+├── dns-conf/
+│   └── cloudflare.ini
+├── nginx/
+│   ├── proxy-confs/
+│   └── site-confs/
+├── www/
+└── tunnelconfig.yml
 ```

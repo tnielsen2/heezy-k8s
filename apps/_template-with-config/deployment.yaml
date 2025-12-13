@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: APP_NAME
+  namespace: heezy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: APP_NAME
+  template:
+    metadata:
+      labels:
+        app: APP_NAME
+    spec:
+      imagePullSecrets:
+      - name: ecr-credentials
+      containers:
+      - name: APP_NAME
+        image: 025066240222.dkr.ecr.us-east-2.amazonaws.com/APP_NAME:latest
+        ports:
+        - containerPort: PORT
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: "America/New_York"
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: downloads
+          mountPath: /downloads
+        - name: movies
+          mountPath: /movies
+        - name: tv
+          mountPath: /tv
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: APP_NAME-config
+      - name: downloads
+        persistentVolumeClaim:
+          claimName: nfs-downloads
+      - name: movies
+        persistentVolumeClaim:
+          claimName: nfs-movies
+      - name: tv
+        persistentVolumeClaim:
+          claimName: nfs-tv

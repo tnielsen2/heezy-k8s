@@ -13,9 +13,11 @@ spec:
       labels:
         app: about-website
     spec:
+      imagePullSecrets:
+      - name: ecr-credentials
       containers:
       - name: swag
-        image: lscr.io/linuxserver/swag
+        image: 025066240222.dkr.ecr.us-east-2.amazonaws.com/swag-about:latest
         ports:
         - containerPort: 80
         - containerPort: 443

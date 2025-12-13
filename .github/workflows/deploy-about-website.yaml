@@ -14,14 +14,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy to Kubernetes
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-2
+
+      - name: Login to ECR
+        run: aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 025066240222.dkr.ecr.us-east-2.amazonaws.com
+
+      - name: Build and push image
+        run: |
+          cd apps/about-website
+          docker build -t swag-about:${{ github.sha }} .
+          docker tag swag-about:${{ github.sha }} 025066240222.dkr.ecr.us-east-2.amazonaws.com/swag-about:${{ github.sha }}
+          docker tag swag-about:${{ github.sha }} 025066240222.dkr.ecr.us-east-2.amazonaws.com/swag-about:latest
+          docker push 025066240222.dkr.ecr.us-east-2.amazonaws.com/swag-about:${{ github.sha }}
+          docker push 025066240222.dkr.ecr.us-east-2.amazonaws.com/swag-about:latest
+
+      - name: Update deployment image
+        run: |
+          kubectl set image deployment/about-website swag=025066240222.dkr.ecr.us-east-2.amazonaws.com/swag-about:${{ github.sha }} -n heezy || kubectl apply -k apps/about-website/
+
+      - name: Deploy base resources
         run: |
           kubectl apply -k base/
           kubectl apply -f base/cloudflare-tunnel.yaml
-          kubectl apply -k apps/about-website/
-          kubectl rollout status deployment/about-website -n heezy --timeout=5m
 
-      - name: Copy website files
-        run: |
-          cd apps/about-website
-          ./deploy-files.sh
+      - name: Wait for rollout
+        run: kubectl rollout status deployment/about-website -n heezy --timeout=5m

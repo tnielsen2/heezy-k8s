@@ -1,0 +1,73 @@
+name: Deploy Service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/sonarr/**'
+      - 'apps/radarr/**'
+      - 'apps/overseerr/**'
+      - 'apps/tautulli/**'
+      - 'apps/emulatorjs/**'
+      - 'apps/sabnzbd/**'
+      - 'apps/nzbhydra/**'
+      - 'apps/ombi/**'
+      - 'apps/pihole/**'
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'Service to deploy'
+        required: true
+        type: choice
+        options:
+          - sonarr
+          - radarr
+          - overseerr
+          - tautulli
+          - emulatorjs
+          - sabnzbd
+          - nzbhydra
+          - ombi
+          - pihole
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changed service
+        id: detect
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "service=${{ inputs.service }}" >> $GITHUB_OUTPUT
+          else
+            SERVICE=$(git diff --name-only HEAD^ HEAD | grep '^apps/' | cut -d'/' -f2 | head -1)
+            echo "service=$SERVICE" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-2
+
+      - name: Login to ECR
+        run: aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 025066240222.dkr.ecr.us-east-2.amazonaws.com
+
+      - name: Build and push image
+        run: |
+          SERVICE=${{ steps.detect.outputs.service }}
+          cd apps/$SERVICE
+          docker build -t $SERVICE:${{ github.sha }} .
+          docker tag $SERVICE:${{ github.sha }} 025066240222.dkr.ecr.us-east-2.amazonaws.com/$SERVICE:${{ github.sha }}
+          docker tag $SERVICE:${{ github.sha }} 025066240222.dkr.ecr.us-east-2.amazonaws.com/$SERVICE:latest
+          docker push 025066240222.dkr.ecr.us-east-2.amazonaws.com/$SERVICE:${{ github.sha }}
+          docker push 025066240222.dkr.ecr.us-east-2.amazonaws.com/$SERVICE:latest
+
+      - name: Deploy to Kubernetes
+        run: |
+          SERVICE=${{ steps.detect.outputs.service }}
+          kubectl set image deployment/$SERVICE $SERVICE=025066240222.dkr.ecr.us-east-2.amazonaws.com/$SERVICE:${{ github.sha }} -n heezy || kubectl apply -k apps/$SERVICE/
+          kubectl rollout status deployment/$SERVICE -n heezy --timeout=5m
