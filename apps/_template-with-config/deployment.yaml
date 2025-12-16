@@ -13,8 +13,6 @@ spec:
       labels:
         app: APP_NAME
     spec:
-      imagePullSecrets:
-      - name: ecr-credentials
       containers:
       - name: APP_NAME
         image: 025066240222.dkr.ecr.us-east-2.amazonaws.com/APP_NAME:latest

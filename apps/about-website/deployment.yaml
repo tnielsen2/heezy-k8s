@@ -13,8 +13,6 @@ spec:
       labels:
         app: about-website
     spec:
-      imagePullSecrets:
-      - name: ecr-credentials
       containers:
       - name: swag
         image: 025066240222.dkr.ecr.us-east-2.amazonaws.com/about-website:latest
@@ -66,4 +64,11 @@ spec:
             port: 80
           initialDelaySeconds: 15
           periodSeconds: 5
+        volumeMounts:
+        - name: config
+          mountPath: /config
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: about-swag-config
 

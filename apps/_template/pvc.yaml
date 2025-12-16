@@ -6,7 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: rook-ceph-block
+  storageClassName: longhorn
   resources:
     requests:
       storage: 5Gi
@@ -19,7 +19,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: rook-cephfs
+  storageClassName: nfs-media
   resources:
     requests:
       storage: 100Gi
