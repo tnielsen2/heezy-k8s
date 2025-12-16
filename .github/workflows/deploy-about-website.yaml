@@ -34,7 +34,8 @@ jobs:
       - name: Build and push image
         run: |
           cd apps/about-website
-          docker build -t about-website:${{ github.sha }} .
+          CF_TOKEN=$(aws secretsmanager get-secret-value --secret-id production/heezy/about/swag --region us-east-2 --query SecretString --output text | jq -r .CF_API_TOKEN)
+          docker build --build-arg CF_API_TOKEN="$CF_TOKEN" -t about-website:${{ github.sha }} .
           docker tag about-website:${{ github.sha }} 025066240222.dkr.ecr.us-east-2.amazonaws.com/about-website:${{ github.sha }}
           docker tag about-website:${{ github.sha }} 025066240222.dkr.ecr.us-east-2.amazonaws.com/about-website:latest
           docker push 025066240222.dkr.ecr.us-east-2.amazonaws.com/about-website:${{ github.sha }}
